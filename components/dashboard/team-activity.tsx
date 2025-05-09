@@ -63,24 +63,24 @@ export function TeamActivity() {
                 <AvatarFallback>{member.initials}</AvatarFallback>
               </Avatar>
               <span
-                className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white ${
+                className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-background ${
                   member.status === "online" ? "bg-green-500" : "bg-gray-300"
                 }`}
               ></span>
             </div>
             <div>
-              <p className="text-sm font-medium">{member.name}</p>
+              <p className="text-sm font-medium text-foreground">{member.name}</p>
               <div className="flex items-center space-x-2">
                 <Badge variant="outline" className="text-xs px-1 py-0 h-5">
                   {member.role}
                 </Badge>
-                <p className="text-xs text-gray-500">{member.lastActive}</p>
+                <p className="text-xs text-muted-foreground">{member.lastActive}</p>
               </div>
             </div>
           </div>
           <div className="text-right">
-            <p className="text-xs text-gray-500">Documentos</p>
-            <p className="text-sm">
+            <p className="text-xs text-muted-foreground">Documentos</p>
+            <p className="text-sm text-foreground">
               <span className="font-medium">{member.documentsUploaded}</span> subidos ·{" "}
               <span className="font-medium">{member.documentsReviewed}</span> revisados
             </p>

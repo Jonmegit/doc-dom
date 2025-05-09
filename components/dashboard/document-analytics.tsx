@@ -38,12 +38,16 @@ function drawBarChart(ctx, data, colors) {
   const barWidth = width / (data.length * 2)
   const maxValue = Math.max(...data.map((item) => (typeof item.count === "number" ? item.count : 0)))
 
+  // Usar colores que funcionen bien en ambos modos (claro y oscuro)
+  const textColor = "currentColor" // Usa el color de texto actual del contexto
+  const axisColor = "#6b7280" // Un gris medio que es visible en ambos modos
+
   // Dibujar ejes
   ctx.beginPath()
   ctx.moveTo(40, 20)
   ctx.lineTo(40, height - 40)
   ctx.lineTo(width - 20, height - 40)
-  ctx.strokeStyle = "#e5e7eb"
+  ctx.strokeStyle = axisColor
   ctx.stroke()
 
   // Dibujar barras
@@ -56,12 +60,12 @@ function drawBarChart(ctx, data, colors) {
     ctx.fillRect(x, y, barWidth, barHeight)
 
     // Etiquetas
-    ctx.fillStyle = "#6b7280"
+    ctx.fillStyle = axisColor
     ctx.font = "10px sans-serif"
     ctx.textAlign = "center"
     ctx.fillText(item.category || item.type, x + barWidth / 2, height - 25)
 
-    ctx.fillStyle = "#374151"
+    ctx.fillStyle = textColor
     ctx.font = "12px sans-serif"
     ctx.textAlign = "center"
     ctx.fillText(item.count.toString(), x + barWidth / 2, y - 5)
@@ -74,6 +78,9 @@ function drawPieChart(ctx, data, colors) {
   const radius = Math.min(width, height) / 2 - 40
   const centerX = width / 2
   const centerY = height / 2
+
+  // Usar colores que funcionen bien en ambos modos
+  const textColor = "currentColor"
 
   const total = data.reduce((sum, item) => sum + item.count, 0)
   let startAngle = 0
@@ -113,7 +120,7 @@ function drawPieChart(ctx, data, colors) {
     ctx.fillStyle = colors[index % colors.length]
     ctx.fillRect(legendX, legendY, 10, 10)
 
-    ctx.fillStyle = "#374151"
+    ctx.fillStyle = textColor
     ctx.font = "10px sans-serif"
     ctx.textAlign = "left"
     ctx.textBaseline = "middle"
@@ -126,6 +133,10 @@ function drawLineChart(ctx, data, colors) {
   const height = ctx.canvas.height
   const padding = 40
 
+  // Usar colores que funcionen bien en ambos modos
+  const textColor = "currentColor"
+  const axisColor = "#6b7280"
+
   // Encontrar valores máximos
   const allValues = data.flatMap((item) => [item.uploads || 0, item.views || 0, item.edits || 0])
   const maxValue = Math.max(...allValues, 10)
@@ -135,7 +146,7 @@ function drawLineChart(ctx, data, colors) {
   ctx.moveTo(padding, padding)
   ctx.lineTo(padding, height - padding)
   ctx.lineTo(width - padding, height - padding)
-  ctx.strokeStyle = "#e5e7eb"
+  ctx.strokeStyle = axisColor
   ctx.stroke()
 
   // Dibujar líneas de datos
@@ -178,7 +189,7 @@ function drawLineChart(ctx, data, colors) {
   data.forEach((item, index) => {
     const x = padding + index * ((width - padding * 2) / (data.length - 1))
 
-    ctx.fillStyle = "#6b7280"
+    ctx.fillStyle = axisColor
     ctx.font = "10px sans-serif"
     ctx.textAlign = "center"
     ctx.fillText(item.date.split("-")[2], x, height - padding + 15)
@@ -192,7 +203,7 @@ function drawLineChart(ctx, data, colors) {
     ctx.fillStyle = metric.color
     ctx.fillRect(legendX, legendY, 10, 10)
 
-    ctx.fillStyle = "#374151"
+    ctx.fillStyle = textColor
     ctx.font = "10px sans-serif"
     ctx.textAlign = "left"
     ctx.textBaseline = "middle"

@@ -99,13 +99,15 @@ export function RecentActivity() {
             <AvatarFallback>{activity.user.initials}</AvatarFallback>
           </Avatar>
           <div className="space-y-1">
-            <p className="text-sm">
+            <p className="text-sm text-foreground">
               <span className="font-medium">{activity.user.name}</span>{" "}
-              <span className="text-gray-500">{getActionText(activity.action)}</span>{" "}
+              <span className="text-muted-foreground">{getActionText(activity.action)}</span>{" "}
               <span className="font-medium">{activity.document}</span>
             </p>
-            <p className="text-xs text-gray-500">{activity.timestamp}</p>
-            {activity.details && <p className="text-sm mt-1 p-2 bg-gray-50 rounded-md">{activity.details}</p>}
+            <p className="text-xs text-muted-foreground">{activity.timestamp}</p>
+            {activity.details && (
+              <p className="text-sm mt-1 p-2 bg-muted rounded-md text-foreground">{activity.details}</p>
+            )}
           </div>
           <div className="ml-auto">{getActionIcon(activity.action)}</div>
         </div>
