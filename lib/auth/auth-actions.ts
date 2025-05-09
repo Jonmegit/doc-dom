@@ -21,20 +21,17 @@ export async function signIn(formData: FormData) {
     }
   }
 
-  // Verificar si el usuario tiene un perfil activo
+  // Verificar si el usuario tiene un perfil verificado
   const {
     data: { session },
   } = await supabase.auth.getSession()
 
   if (session) {
-    const { data: profile } = await supabase.from("profiles").select("active").eq("id", session.user.id).single()
+    const { data: profile } = await supabase.from("profiles").select("verified").eq("id", session.user.id).single()
 
-    if (!profile?.active) {
-      // Si el perfil no está activo, cerrar sesión y devolver error
-      await supabase.auth.signOut()
-      return {
-        error: "Tu cuenta aún no ha sido activada. Por favor, espera a que un administrador active tu cuenta.",
-      }
+    if (!profile?.verified) {
+      // Si el perfil no está verificado, redirigir a la página de verificación
+      return { redirect: "/verificar" }
     }
   }
 

@@ -28,38 +28,47 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: authError.message }, { status: 500 })
     }
 
-    // 2. Crear perfil de usuario con estado pendiente
+    // 2. Crear perfil de usuario con estado pendiente de verificación
     if (authData.user) {
       const { error: profileError } = await supabase.from("profiles").insert({
         id: authData.user.id,
         full_name: fullName,
         email,
         plan: plan,
-        active: false,
+        verified: false,
       })
 
       if (profileError) {
         return NextResponse.json({ error: profileError.message }, { status: 500 })
       }
 
-      // 3. Enviar notificación al administrador a través de n8n
-      const adminNotificationResponse = await fetch(process.env.N8N_WEBHOOK_URL || "", {
+      // 3. Generar token de verificación
+      const verificationToken = crypto.randomUUID()
+
+      // 4. Guardar el token en la base de datos
+      await supabase.from("verification_tokens").insert({
+        user_id: authData.user.id,
+        token: verificationToken,
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 horas
+      })
+
+      // 5. Enviar correo de verificación a través de n8n
+      const verificationResponse = await fetch(process.env.N8N_WEBHOOK_URL || "", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: process.env.ADMIN_EMAIL,
-          name: "Administrador",
-          userEmail: email,
-          userName: fullName,
+          email: email,
+          name: fullName,
+          subject: "Verifica tu cuenta en DocManager",
+          verificationUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify?token=${verificationToken}`,
           plan: plan,
-          activationUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/activate-user?userId=${authData.user.id}&token=${authData.user.id}`,
         }),
       })
 
-      if (!adminNotificationResponse.ok) {
-        console.error("Error al enviar notificación al administrador")
+      if (!verificationResponse.ok) {
+        console.error("Error al enviar correo de verificación")
       }
     }
 

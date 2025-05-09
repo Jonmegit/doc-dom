@@ -12,7 +12,18 @@ export async function middleware(req: NextRequest) {
   } = await supabase.auth.getSession()
 
   // Rutas públicas que no requieren autenticación
-  const publicRoutes = ["/login", "/registro", "/recuperar-password", "/activar", "/espera-activacion"]
+  const publicRoutes = [
+    "/",
+    "/planes",
+    "/checkout",
+    "/login",
+    "/registro",
+    "/recuperar-password",
+    "/verificar",
+    "/checkout/confirmacion",
+    "/terminos",
+    "/privacidad",
+  ]
   const isPublicRoute = publicRoutes.some((route) => req.nextUrl.pathname.startsWith(route))
 
   // Rutas de autenticación que redirigen a dashboard si ya está autenticado
@@ -21,7 +32,7 @@ export async function middleware(req: NextRequest) {
 
   // Si el usuario está autenticado y trata de acceder a una ruta de auth, redirigir al dashboard
   if (session && isAuthRoute) {
-    return NextResponse.redirect(new URL("/", req.url))
+    return NextResponse.redirect(new URL("/dashboard", req.url))
   }
 
   // Si el usuario no está autenticado y trata de acceder a una ruta protegida, redirigir a login
@@ -29,14 +40,14 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url))
   }
 
-  // Si el usuario está autenticado, verificar si su perfil está activo
+  // Si el usuario está autenticado, verificar si su perfil está verificado
   if (session && !isPublicRoute) {
-    // Consultar el estado de activación del perfil
-    const { data: profile } = await supabase.from("profiles").select("active").eq("id", session.user.id).single()
+    // Consultar el estado de verificación del perfil
+    const { data: profile } = await supabase.from("profiles").select("verified").eq("id", session.user.id).single()
 
-    // Si el perfil no está activo y no está en la página de espera, redirigir
-    if (profile && !profile.active && !req.nextUrl.pathname.startsWith("/espera-activacion")) {
-      return NextResponse.redirect(new URL("/espera-activacion", req.url))
+    // Si el perfil no está verificado y no está en la página de verificación, redirigir
+    if (profile && !profile.verified && !req.nextUrl.pathname.startsWith("/verificar")) {
+      return NextResponse.redirect(new URL("/verificar", req.url))
     }
   }
 

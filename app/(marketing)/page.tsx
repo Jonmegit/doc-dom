@@ -37,7 +37,7 @@ export default function LandingPage() {
                 alt="Dashboard Preview"
                 className="rounded-lg object-cover shadow-xl"
                 height={500}
-                src="/placeholder.svg?key=xnr6n"
+                src="/document-management-dashboard.png"
                 width={600}
               />
             </div>
